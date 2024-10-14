@@ -6,15 +6,20 @@ import com.currencyexchange.service.spi.CurrencyExchangeService;
 import com.currencyexchange.util.Currency;
 import com.currencyexchange.util.ExchangeRateTable;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
   @Override
+  @Cacheable(cacheNames = "currency", key = "#request.currencyOrigin + '_' + #request.currencyDestination + '_' + #request.amount")
   public Mono<CurrencyExchangeResponse> executeChange(CurrencyExchangeRequest request) {
 
     String currencyOrigin = request.getCurrencyOrigin();
@@ -22,6 +27,7 @@ public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
     Currency currency = Currency.valueOf(currencyOrigin.concat("_").concat(currencyDestination));
 
     return ExchangeRateTable.getValueByKey(currency).map(data -> {
+      simulateSleep();
       CurrencyExchangeResponse response = new CurrencyExchangeResponse();
       response.setAmount(request.getAmount());
       response.setChangedAmount(request.getAmount().multiply(data.getExchangeRate()));
@@ -31,5 +37,10 @@ public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
 
       return response;
     });
+  }
+
+  @SneakyThrows
+  private void simulateSleep() {
+    TimeUnit.SECONDS.sleep(5);
   }
 }

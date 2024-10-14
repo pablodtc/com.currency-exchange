@@ -1,6 +1,6 @@
 package com.currencyexchange.web.controller;
 
-import com.currencyexchange.JwtAction;
+import com.currencyexchange.web.annotation.JwtAction;
 import com.currencyexchange.model.CurrencyExchangeRequest;
 import com.currencyexchange.model.CurrencyExchangeResponse;
 import com.currencyexchange.service.spi.CurrencyExchangeService;

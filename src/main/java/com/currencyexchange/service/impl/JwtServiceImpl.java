@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-  private static final long JWT_DURATION = TimeUnit.SECONDS.toMillis(2);
+  private static final long JWT_DURATION = TimeUnit.MINUTES.toMillis(2);
   private static final String JWT_SIGNATURE_SECRET = "secret";
   private static final String CLAIM_PERMISSIONS = "permissions";
 
