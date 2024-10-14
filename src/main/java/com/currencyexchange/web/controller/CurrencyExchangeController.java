@@ -1,5 +1,6 @@
-package com.currencyexchange.web;
+package com.currencyexchange.web.controller;
 
+import com.currencyexchange.JwtAction;
 import com.currencyexchange.model.CurrencyExchangeRequest;
 import com.currencyexchange.model.CurrencyExchangeResponse;
 import com.currencyexchange.service.spi.CurrencyExchangeService;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 public class CurrencyExchangeController {
   private final CurrencyExchangeService service;
 
+  @JwtAction("change")
   @PostMapping("/change")
   public Mono<CurrencyExchangeResponse> executeChange (@RequestBody CurrencyExchangeRequest request) {
 

@@ -1,1 +1,2 @@
-spring.application.name=com.currency-exchange
+server:
+  port: 8081
