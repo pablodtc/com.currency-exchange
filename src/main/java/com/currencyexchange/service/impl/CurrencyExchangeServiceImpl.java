@@ -5,6 +5,7 @@ import com.currencyexchange.model.CurrencyExchangeResponse;
 import com.currencyexchange.service.spi.CurrencyExchangeService;
 import com.currencyexchange.util.Currency;
 import com.currencyexchange.util.ExchangeRateTable;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
   @Override
   @Cacheable(cacheNames = "currency", key = "#request.currencyOrigin + '_' + #request.currencyDestination + '_' + #request.amount")
+  @CircuitBreaker(name = "currency-cb-01")
   public Mono<CurrencyExchangeResponse> executeChange(CurrencyExchangeRequest request) {
 
     String currencyOrigin = request.getCurrencyOrigin();
