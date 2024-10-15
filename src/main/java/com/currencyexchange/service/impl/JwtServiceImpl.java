@@ -6,20 +6,17 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
+import static com.currencyexchange.util.Constants.*;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-  private static final long JWT_DURATION = TimeUnit.MINUTES.toMillis(2);
-  private static final String JWT_SIGNATURE_SECRET = "secret";
-  private static final String CLAIM_PERMISSIONS = "permissions";
-
   @Override
-  public String generateToken(String permissions) {
+  public Mono<String> generateToken(String permissions) {
     Date currentDate = new Date();
     long endTime = currentDate.getTime() + JWT_DURATION;
     String jwt = Jwts.builder()
@@ -28,16 +25,16 @@ public class JwtServiceImpl implements JwtService {
       .signWith(SignatureAlgorithm.HS256, JWT_SIGNATURE_SECRET)
       .claim(CLAIM_PERMISSIONS, permissions)
       .compact();
-    return jwt;
+    return Mono.just(jwt);
   }
 
   @Override
-  public boolean  validateToken(String token, String permissionToValidate) {
+  public Mono<Boolean> validateToken(String token, String permissionToValidate) {
     Jws<Claims> parsedJwt = Jwts.parser()
       .setSigningKey(JWT_SIGNATURE_SECRET)
       .parseClaimsJws(token);
     String permissionsString = parsedJwt.getBody().get(CLAIM_PERMISSIONS, String.class);
-    return Arrays.stream(permissionsString.split(","))
-      .anyMatch(claimPermission -> permissionToValidate.equals(claimPermission));
+    return Mono.just(Arrays.stream(permissionsString.split(","))
+      .anyMatch(claimPermission -> permissionToValidate.equals(claimPermission)));
   }
 }

@@ -3,6 +3,7 @@ package com.currencyexchange.web.controller;
 import com.currencyexchange.model.CurrencyExchangeRequest;
 import com.currencyexchange.model.CurrencyExchangeResponse;
 import com.currencyexchange.service.spi.CurrencyExchangeService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CurrencyExchangeControllerTest {
 
   @Test
+  @DisplayName("Return response when exists the exchange rate")
   void executeChange() {
 
     CurrencyExchangeService service = Mockito.mock(CurrencyExchangeService.class);

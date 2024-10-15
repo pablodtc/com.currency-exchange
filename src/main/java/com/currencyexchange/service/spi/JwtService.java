@@ -1,6 +1,8 @@
 package com.currencyexchange.service.spi;
 
+import reactor.core.publisher.Mono;
+
 public interface JwtService {
-  String generateToken (String permissions);
-  boolean validateToken (String token, String permissionToValidate);
+  Mono<String> generateToken (String permissions);
+  Mono<Boolean> validateToken (String token, String permissionToValidate);
 }

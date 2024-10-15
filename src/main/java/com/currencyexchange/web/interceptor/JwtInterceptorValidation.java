@@ -38,10 +38,16 @@ public class JwtInterceptorValidation implements WebFilter {
     }
     String jwt = authorization.substring(7);
     log.info("Token: {} | Action: {}", jwt, jwtAction.value());
-    boolean isAuthorized = jwtService.validateToken(jwt, jwtAction.value());
-    if (!isAuthorized) {
-      throw new UnauthorizedException("E002", "No está autorizado para consumir este servicio");
-    }
+
+    jwtService
+        .validateToken(jwt, jwtAction.value())
+        .map(isAuthorized -> {
+      if (!isAuthorized) {
+        throw new UnauthorizedException("E002", "No está autorizado para consumir este servicio");
+      }
+      return chain.filter(exchange);
+    });
+
     return chain.filter(exchange);
   }
 }
