@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
+  private final ExchangeRateTable table;
   @Override
   @Cacheable(cacheNames = "currency", key = "#request.currencyOrigin + '_' + #request.currencyDestination + '_' + #request.amount")
   @CircuitBreaker(name = "currency-cb-01")
@@ -28,7 +29,7 @@ public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
     String currencyDestination = request.getCurrencyDestination();
     Currency currency = Currency.valueOf(currencyOrigin.concat("_").concat(currencyDestination));
 
-    return ExchangeRateTable.getValueByKey(currency).map(data -> {
+    return table.getValueByKey(currency).map(data -> {
       simulateSleep();
       CurrencyExchangeResponse response = new CurrencyExchangeResponse();
       response.setAmount(request.getAmount());
